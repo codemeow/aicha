@@ -3,16 +3,16 @@ Aicha Programming Language Interpreter
 
 # Commands
 
-## MOV <p1> <p2>
+## MOV [p1] [p2]
 P1 = P2
 
-## NOR <p1> <p2>
+## NOR [p1] [p2]
 P1 = ~(P1 | P2)
 
-## SHL <p1> <p2>
+## SHL [p1] [p2]
 P1 = P1 << P2
 
-## SHR <p1> <p2>
+## SHR [p1] [p2]
 P1 = P1 >> P2
 
 ## NOP
@@ -25,5 +25,5 @@ Does nothing
 Extension - is a file that contains instructions. System extensions are in ./sys and user extensions are in ./usr directories. The system directory has higher priority.
 
 # Interpreter
-Calling scheme: main.sh <file to process> <mode> <output file (optional)> <initialiser>
+Calling scheme: main.sh [file to process] [mode] [output file (optional)] [initialiser]
 Mode could be HEX, INTS or ASCII, that defines the output format of all registers after the interperting is done. Initialiser defines the starting value of all (except REGISTFF) registers before start.
