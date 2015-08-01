@@ -57,9 +57,13 @@ fi
 REGISTLEFT="REGISTFD"
 REGISTRGHT="REGISTFE"
 
+mkdir sys 2>/dev/null
+mkdir usr 2>/dev/null
+
 if [ "$PAR2" -eq 0 ]
 then
     echo "# Creating registers"
+    mkdir registers 2>/dev/null
     rm -f ./registers/*
     for ((i=0; i <= 0xFF ; i++))
     do
