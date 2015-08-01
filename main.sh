@@ -65,10 +65,11 @@ then
     echo "# Creating registers"
     mkdir registers 2>/dev/null
     rm -f ./registers/*
-    for ((i=0; i <= 0xFF ; i++))
+    for ((i=0; i < 0xFF ; i++))
     do
       echo "$INITER" > "./registers/REGIST$(printf %02X $i)"
     done
+    echo "00000000" > "./registers/REGISTFF"
 fi
       
 for ((i=0; i < "$PAR2"; i++)) do echo -n "тФВ"; done; echo "тФМтФАтФАтФА"
