@@ -19,15 +19,15 @@ then
     exit 0
 fi
 
-if [ "$PAR2" == "HEX" ]
+if [ "$PAR2" = "HEX" ]
 then
    FORMAT="HEX"
    PAR2="0"
-elif [ "$PAR2" == "ASCII" ]
+elif [ "$PAR2" = "ASCII" ]
 then
    FORMAT="ASCII"
    PAR2="0"
-elif [ "$PAR2" == "INTS" ]
+elif [ "$PAR2" = "INTS" ]
 then
    FORMAT="INTS"
    PAR2="0"
@@ -60,19 +60,20 @@ REGISTRGHT="REGISTFE"
 mkdir sys 2>/dev/null
 mkdir usr 2>/dev/null
 
-if [ "$PAR2" -eq 0 ]
+if [ "$PAR2" = 0 ]
 then
     echo "# Creating registers"
     mkdir registers 2>/dev/null
     rm -f ./registers/*
-    for ((i=0; i <= 0xFF ; i++))
+    
+    for ((i=0; i <= 0xFF; i++))
     do
-      echo "$INITER" > "./registers/REGIST$(printf %02X $i)"
+        echo "$INITER" > ./registers/REGIST"$(printf %02X $i)"
     done
 fi
       
-for ((i=0; i < "$PAR2"; i++)) do echo -n "тФВ"; done; echo "тФМтФАтФАтФА"
-for ((i=0; i < "$PAR2"; i++)) do echo -n "тФВ"; done; echo -n "тФВ"
+for ((i=0; i < "$PAR2"; i++)) do echo -n "│"; done; echo "┌───"
+for ((i=0; i < "$PAR2"; i++)) do echo -n "│"; done; echo -n "│"
 basename "$PAR1" .aic
 
 OLDIFS="$IFS"
@@ -148,7 +149,6 @@ do
             esac;;
         "NOP" ) ;;        
         [A-Z][0-9A-Z][0-9A-Z] )
-            echo "Custom"
             if [ -n $lvalue ]
             then
                 case "$lvalue" in
@@ -174,12 +174,12 @@ do
                 esac
             fi
         
-            if [ -n "$(find ./sys/ -name "$command.aic" | tr -d "\n")" ]
+            if [ -n "$(find ./sys/ -name $command.aic | tr -d '\n')" ]
             then                
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 sh ./main.sh "./sys/$command.aic" $(($2 + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
-            elif [ -n "$(find ./usr/ -name "$command.aic" | tr -d "\n")" ]
+            elif [ -n "$(find ./usr/ -name $command.aic | tr -d '\n')" ]
             then
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 sh ./main.sh "./usr/$command.aic" $(($2 + 1))
@@ -194,7 +194,7 @@ do
     printf %08X "$TT" > "./registers/REGISTFF"
 done
 
-for ((i=0; i < "$PAR2"; i++)) do echo -n "тФВ"; done; echo "тФФтФАтФАтФА"
+for ((i=0; i < "$PAR2"; i++)) do echo -n "│"; done; echo "└───"
 
 if [ "$PAR2" -eq 0 ]
 then
