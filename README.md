@@ -27,3 +27,7 @@ Extension - is a file that contains instructions. System extensions are in ./sys
 # Interpreter
 Calling scheme: main.sh [file to process] [mode] [output file (optional)] [initialiser]
 Mode could be HEX, INTS or ASCII, that defines the output format of all registers after the interperting is done. Initialiser defines the starting value of all (except REGISTFF) registers before start.
+
+# Running under Ubuntu
+sudo dpkg-reconfigure dash
+select no
