@@ -119,9 +119,7 @@ for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "┌───"
 for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo -n "│"
 basename "$PAR1" .aic
 
-OLDIFS="$IFS"
 IFS=$'\n' read -d '' -r -a LINES < "$PAR1"
-IFS="$OLDIFS"
 
 echo "00000000" > ./registers/REGISTFF
 
