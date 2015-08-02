@@ -1,0 +1,62 @@
+## «TRU extension» - "Is true?" extension for Aicha programming language
+##
+##  Copyright (C) Alex Cones 2013-2015
+##
+##  This file is part of Project Smilo.
+##
+##  Project Smilo is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU Lesser General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  Project Smilo is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+##  GNU Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public License
+##  along with Project Smilo. If not, see <http://www.gnu.org/licenses/>.
+
+## Input        : REGISTFD
+## Output       : REGISTFD
+## Registers    : REGIST80, REGIST81
+## Dependencies : ORR
+
+# A7 or A6 or A5 or A4 or A3 or A2 or A1 or A0
+
+# Work copies
+MOV REGIST80 REGISTFD
+MOV REGIST81 REGISTFD
+
+# First iteration: 16 bits
+SHR REGIST80 00000010
+ORR REGIST80 REGIST81
+MOV REGIST80 REGISTFD
+MOV REGIST81 REGIST80
+
+# Second iteration: 8 bits
+SHR REGIST80 00000008
+ORR REGIST80 REGIST81
+MOV REGIST80 REGISTFD
+MOV REGIST81 REGIST80
+
+# Third iteration:  4 bits
+SHR REGIST80 00000004
+ORR REGIST80 REGIST81
+MOV REGIST80 REGISTFD
+MOV REGIST81 REGIST80
+
+# Fourth iteration: 2 bits
+SHR REGIST80 00000002
+ORR REGIST80 REGIST81
+MOV REGIST80 REGISTFD
+MOV REGIST81 REGIST80
+
+# Fifth iteration:  1 bit
+SHR REGIST80 00000002
+ORR REGIST80 REGIST81
+
+# Result cut
+AND REGISTFD 00000001
+
+# The result is the REGISTFD
