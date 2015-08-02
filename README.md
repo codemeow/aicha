@@ -30,4 +30,5 @@ Mode could be HEX, INTS or ASCII, that defines the output format of all register
 
 # Running under Ubuntu
 sudo dpkg-reconfigure dash
+
 select no
