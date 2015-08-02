@@ -1,13 +1,50 @@
+## «XOR extension» - "XOR" extension for Aicha programming language
+##
+##  Copyright (C) Alex Cones 2013-2015
+##
+##  This file is part of Project Smilo.
+##
+##  Project Smilo is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU Lesser General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  Project Smilo is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+##  GNU Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public License
+##  along with Project Smilo. If not, see <http://www.gnu.org/licenses/>.
+
+## Input        : REGISTFD, REGISTFE
+## Output       : REGISTFD
+## Registers    : REGIST80, REGIST81, REGIST82, REGIST83
+## Dependencies : ORR
+
+# (⌐FD ∨ FE) ∧ (FD ∨ ⌐FE)
+
+# Work copies
 MOV REGIST80 REGISTFD
 MOV REGIST81 REGISTFE
 MOV REGIST82 REGISTFD
 MOV REGIST83 REGISTFE
+
+# ⌐FD
 NOT REGIST80
 MOV REGIST80 REGISTFD
+
+# ⌐FE
 NOT REGIST83
 MOV REGIST83 REGISTFD
+
+# ⌐FD ∨ FE
 ORR REGIST80 REGIST81
 MOV REGIST80 REGISTFD
+
+# FD ∨ ⌐FE
 ORR REGIST82 REGIST83
 MOV REGIST82 REGISTFD
+
+# ∧
 AND REGIST80 REGIST82
