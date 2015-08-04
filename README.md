@@ -25,10 +25,6 @@ Does nothing
 Extension - is a file that contains instructions. System extensions are in ./sys and user extensions are in ./usr directories. The system directory has higher priority.
 
 # Interpreter
-Calling scheme: main.sh [file to process] [mode] [output file (optional)] [initialiser]
+Calling scheme: main.sh [file to process] [mode] [output file (optional)] [initialiser(optional)] [debug mode(optional)]
 Mode could be HEX, INTS or ASCII, that defines the output format of all registers after the interperting is done. Initialiser defines the starting value of all (except REGISTFF) registers before start.
-
-# Running under Ubuntu
-sudo dpkg-reconfigure dash
-
-select no
+Debug mode could be "RELEASE" or "DEBUG". In DEBUG mode the interpreter will print lines that starts with "# "
