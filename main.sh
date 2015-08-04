@@ -44,7 +44,7 @@ fi
 
 if [ ! -f "$PAR1" ]
 then
-    echo "ERR: input file is not exist"
+    echo "ERR: input file does not exist"
     exit 2;
 fi
 
@@ -274,7 +274,7 @@ do
                 ./main.sh "./usr/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             else
-                echo "ERR: Command \"$command\" not found"
+                echo "ERR: Command \"$command\" is not found"
                 exit 2;
             fi;;
         "#" ) 
