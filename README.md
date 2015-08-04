@@ -7,7 +7,7 @@ Aicha Programming Language Interpreter
 P1 = P2
 
 ## NOR [p1] [p2]
-P1 = ~(P1 | P2)
+P1 = P1 ↓ P2
 
 ## SHL [p1] [p2]
 P1 = P1 << P2
