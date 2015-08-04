@@ -22,6 +22,6 @@
 ## Registers    : 
 ## Dependencies : AND
 
-# Resul = (FD >> FE) & 1
+# Result = (FD >> FE) & 1
 SHR REGISTFD REGISTFE
 AND REGISTFD 00000001
