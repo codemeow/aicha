@@ -147,7 +147,9 @@ do
                                 echo "$rvalue" > "./registers/$lvalue"
                             fi;;
                      esac;;
-                * ) exit 2;;
+                * )  
+                     echo "ERR: MOV lvalue cannot be a number"
+                     exit 2;;
             esac;;         
         "SHL" )
             case "$lvalue" in
@@ -160,7 +162,9 @@ do
                              T=$(($T << $((0x$rvalue)) & 0xFFFFFFFF));;
                      esac
                      printf %08X $T > "./registers/$lvalue";;
-                * ) exit 2;;  
+                * )   
+                     echo "ERR: SHL lvalue cannot be a number"
+                     exit 2;; 
             esac;;
         "SHR" )
             case "$lvalue" in
@@ -173,7 +177,9 @@ do
                              T=$(($T >> $((0x$rvalue))));;
                      esac
                      printf %08X $T > "./registers/$lvalue";;
-                * ) exit 2;;  
+                * )   
+                     echo "ERR: SHR lvalue cannot be a number"
+                     exit 2;; 
             esac;;
         "NOR" )
             case "$lvalue" in
@@ -186,7 +192,9 @@ do
                              T=$((~$(($(($T | $((0x$rvalue)))))) & 0xFFFFFFFF));;
                      esac
                      printf %08X $T > "./registers/$lvalue";;
-                * ) exit 2;;  
+                * )   
+                     echo "ERR: NOR lvalue cannot be a number"
+                     exit 2;;  
             esac;;
         "NOP" ) ;;        
         [A-Z][0-9A-Z][0-9A-Z] )
