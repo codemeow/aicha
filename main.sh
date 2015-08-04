@@ -42,6 +42,12 @@ then
     exit 0
 fi
 
+if [ ! -f "$PAR1" ]
+then
+    echo "ERR: input file is not exist"
+    exit 2;
+fi
+
 if [ "$PAR2" == "HEX" ]
 then
    FORMAT="HEX"
@@ -90,6 +96,41 @@ else
     DEEPNESS="$PAR6"
 fi
 
+createOutput() {
+    echo "# Creating output"
+    rm -f "$OUTPUT"
+    case "$FORMAT" in
+    "ASCII" ) 
+        for ((i=0; i <= 0xFF; i++))
+        do
+            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" | sed 's/../\\\\x&/g' | xargs echo -ne >> "$OUTPUT"
+            if [ $((i % 16)) -eq 15 ]
+            then
+                echo >> "$OUTPUT"
+            fi
+        done;;
+    "HEX"   )
+        for ((i=0; i <= 0xFF; i++))
+        do
+            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
+            if [ $((i % 8)) -eq 7 ]
+            then
+                echo >> "$OUTPUT"
+            fi
+        done;;
+    "INTS"  ) 
+        for ((i=0; i <= 0xFF; i++))
+        do
+            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
+            echo -n " " >> "$OUTPUT"
+            if [ $((i % 8)) -eq 7 ]
+            then
+                echo >> "$OUTPUT"
+            fi
+        done;;
+    esac
+}
+
 ## Registers table
 # REGIST00 - REGIST7F - For user use
 # REGIST80 - REGISTFC - For system use
@@ -124,7 +165,7 @@ IFS=$'\n' read -d '' -r -a LINES < "$PAR1"
 echo "00000000" > ./registers/REGISTFF
 
 while (( ${#LINES[@]} > 0x$(cat ./registers/REGISTFF)))
-do
+do    
     line="${LINES[0x$(cat ./registers/REGISTFF)]}"
 
     command=$(echo $line | cut -d' ' -f1)
@@ -142,10 +183,7 @@ do
                                 cat "./registers/$rvalue" > "./registers/$lvalue"
                             fi;;
                          [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )
-                            if [ "$rvalue" != "$lvalue" ] 
-                            then                         
-                                echo "$rvalue" > "./registers/$lvalue"
-                            fi;;
+                            echo "$rvalue" > "./registers/$lvalue";;
                      esac;;
                 * )  
                      echo "ERR: MOV lvalue cannot be a number"
@@ -197,14 +235,14 @@ do
                      exit 2;;  
             esac;;
         "NOP" ) ;;        
-        [A-Z][0-9A-Z][0-9A-Z] )
+        [A-Z][0-9A-Z][0-9A-Z] )        
             if [ -n $lvalue ]
             then
                 case "$lvalue" in
                     "REGIST"[0-9A-F][0-9A-F] )
                         if [ "$lvalue" != "$REGISTLEFT" ] 
-                        then                         
-                            cat "./registers/$lvalue" > "./registers/$REGISTLEFT"
+                        then                    
+                            cat "./registers/$lvalue" > "./registers/$REGISTLEFT"  
                         fi;;
                     [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )                 
                         echo "$lvalue" > "./registers/$REGISTLEFT";;
@@ -226,11 +264,13 @@ do
             if [ -n "$(find ./sys/ -name $command.aic | tr -d '\n')" ]
             then                
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
+                echo "00000000" > ./registers/REGISTFF
                 ./main.sh "./sys/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             elif [ -n "$(find ./usr/ -name $command.aic | tr -d '\n')" ]
             then
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
+                echo "00000000" > ./registers/REGISTFF
                 ./main.sh "./usr/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             else
@@ -242,6 +282,10 @@ do
         then
             for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "│ $line"
         fi;;
+        "##" ) ;;
+        * )
+            echo "ERR: Unknown command: \"$command\""
+            exit 2;;
     esac
     
     TT=$((0x$(cat ./registers/REGISTFF) + 1))
@@ -252,37 +296,6 @@ for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "└───"
 
 if [ "$DEEPNESS" == 0 ]
 then
-    echo "# Creating output"
-    rm -f "$OUTPUT"
-    case "$FORMAT" in
-    "ASCII" ) 
-        for ((i=0; i <= 0xFF; i++))
-        do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" | sed 's/../\\\\x&/g' | xargs echo -ne >> "$OUTPUT"
-            if [ $((i % 16)) -eq 15 ]
-            then
-                echo >> "$OUTPUT"
-            fi
-        done;;
-    "HEX"   )
-        for ((i=0; i <= 0xFF; i++))
-        do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
-            if [ $((i % 8)) -eq 7 ]
-            then
-                echo >> "$OUTPUT"
-            fi
-        done;;
-    "INTS"  ) 
-        for ((i=0; i <= 0xFF; i++))
-        do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
-            echo -n " " >> "$OUTPUT"
-            if [ $((i % 8)) -eq 7 ]
-            then
-                echo >> "$OUTPUT"
-            fi
-        done;;
-    esac
+    createOutput
     rm -f ./registers/*
 fi
