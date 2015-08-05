@@ -62,6 +62,13 @@ else
    exit 2
 fi
 
+if [ -z "$PAR6" ]
+then
+    DEEPNESS=0
+else
+    DEEPNESS="$PAR6"
+fi
+
 if [ -z "$PAR3" ] && [ "$DEEPNESS" = 0 ]
 then
     OUTPUT="./output.txt"
@@ -87,13 +94,6 @@ else
         echo "ERR: Bad debug mode"
         exit 2
     fi
-fi
-
-if [ -z "$PAR6" ]
-then
-    DEEPNESS=0
-else
-    DEEPNESS="$PAR6"
 fi
 
 createOutput() {
@@ -265,13 +265,13 @@ do
             then                
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 echo "00000000" > ./registers/REGISTFF
-                ./main.sh "$(find ./sys/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
+                ./main.sh "./sys/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             elif [ -n "$(find ./usr/ -name $command.aic | tr -d '\n')" ]
             then
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 echo "00000000" > ./registers/REGISTFF
-                ./main.sh "$(find ./usr/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
+                ./main.sh "./usr/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             else
                 echo "ERR: Command \"$command\" is not found"
