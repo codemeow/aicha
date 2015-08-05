@@ -265,13 +265,13 @@ do
             then                
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 echo "00000000" > ./registers/REGISTFF
-                ./main.sh "./sys/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
+                ./main.sh "$(find ./sys/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             elif [ -n "$(find ./usr/ -name $command.aic | tr -d '\n')" ]
             then
                 OLDCARET=$((0x$(cat ./registers/REGISTFF)))
                 echo "00000000" > ./registers/REGISTFF
-                ./main.sh "./usr/$command.aic" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
+                ./main.sh "$(find ./usr/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
                 printf %08X "$OLDCARET" > "./registers/REGISTFF"
             else
                 echo "ERR: Command \"$command\" is not found"
