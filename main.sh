@@ -156,7 +156,12 @@ for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "┌───"
 for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo -n "│"
 basename "$PAR1" .aic
 
-IFS=$'\n' read -d '' -r -a LINES < "$PAR1"
+lines=( )
+while IFS= read -r line 
+do
+  lines+=( "$line" )
+done < "$PAR1"
+[[ -n $line ]] && lines+=( "$line" )
 
 echo "00000000" > ./registers/REGISTFF
 
@@ -279,6 +284,7 @@ do
             for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "│ $line"
         fi;;
         "##" ) ;;
+        "" ) ;;
         * )
             echo "ERR: Unknown command: \"$command\""
             exit 2;;
