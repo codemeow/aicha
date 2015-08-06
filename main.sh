@@ -166,9 +166,9 @@ done < "$PAR1"
 
 echo "00000000" > /dev/shm/aicha/registers/REGISTFF
 
-while (( ${#LINES[@]} > 0x$(cat /dev/shm/aicha/registers/REGISTFF)))
+while (( ${#lines[@]} > 0x$(cat /dev/shm/aicha/registers/REGISTFF)))
 do    
-    line="${LINES[0x$(cat /dev/shm/aicha/registers/REGISTFF)]}"
+    line="${lines[0x$(cat /dev/shm/aicha/registers/REGISTFF)]}"
 
     command=$(echo $line | cut -d' ' -f1)
      lvalue=$(echo $line | cut -d' ' -f2)
