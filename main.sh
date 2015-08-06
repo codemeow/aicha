@@ -99,7 +99,7 @@ createOutput() {
     "ASCII" ) 
         for ((i=0; i <= 0xFF; i++))
         do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" | sed 's/../\\\\x&/g' | xargs echo -ne >> "$OUTPUT"
+            cat "/dev/shm/aicha/registers/REGIST$(printf %02X $i)" | tr -d "\n" | sed 's/../\\\\x&/g' | xargs echo -ne >> "$OUTPUT"
             if [ $((i % 16)) -eq 15 ]
             then
                 echo >> "$OUTPUT"
@@ -108,7 +108,7 @@ createOutput() {
     "HEX"   )
         for ((i=0; i <= 0xFF; i++))
         do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
+            cat "/dev/shm/aicha/registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
             if [ $((i % 8)) -eq 7 ]
             then
                 echo >> "$OUTPUT"
@@ -117,7 +117,7 @@ createOutput() {
     "INTS"  ) 
         for ((i=0; i <= 0xFF; i++))
         do
-            cat "./registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
+            cat "/dev/shm/aicha/registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
             echo -n " " >> "$OUTPUT"
             if [ $((i % 8)) -eq 7 ]
             then
@@ -139,16 +139,17 @@ REGISTRGHT="REGISTFE"
 
 mkdir sys 2>/dev/null
 mkdir usr 2>/dev/null
+mkdir -p /dev/shm/aicha/registers
 
 if [ "$DEEPNESS" == 0 ]
 then
     echo "# Creating registers"
     mkdir registers 2>/dev/null
-    rm -f ./registers/*
+    rm -f /dev/shm/aicha/registers/*
     
     for ((i=0; i <= 0xFF; i++))
     do
-        echo "$INITER" > ./registers/REGIST"$(printf %02X $i)"
+        echo "$INITER" > /dev/shm/aicha/registers/REGIST"$(printf %02X $i)"
     done
 fi
       
@@ -163,11 +164,11 @@ do
 done < "$PAR1"
 [[ -n $line ]] && lines+=( "$line" )
 
-echo "00000000" > ./registers/REGISTFF
+echo "00000000" > /dev/shm/aicha/registers/REGISTFF
 
-while (( ${#LINES[@]} > 0x$(cat ./registers/REGISTFF)))
+while (( ${#LINES[@]} > 0x$(cat /dev/shm/aicha/registers/REGISTFF)))
 do    
-    line="${LINES[0x$(cat ./registers/REGISTFF)]}"
+    line="${LINES[0x$(cat /dev/shm/aicha/registers/REGISTFF)]}"
 
     command=$(echo $line | cut -d' ' -f1)
      lvalue=$(echo $line | cut -d' ' -f2)
@@ -181,10 +182,10 @@ do
                          "REGIST"[0-9A-F][0-9A-F] )
                             if [ "$rvalue" != "$lvalue" ] 
                             then                         
-                                cat "./registers/$rvalue" > "./registers/$lvalue"
+                                cat "/dev/shm/aicha/registers/$rvalue" > "/dev/shm/aicha/registers/$lvalue"
                             fi;;
                          [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )
-                            echo "$rvalue" > "./registers/$lvalue";;
+                            echo "$rvalue" > "/dev/shm/aicha/registers/$lvalue";;
                      esac;;
                 * )  
                      echo "ERR: MOV lvalue cannot be a number"
@@ -193,14 +194,14 @@ do
         "SHL" )
             case "$lvalue" in
                 "REGIST"[0-9A-F][0-9A-F] )
-                     T=$((0x$(cat "./registers/$lvalue")))
+                     T=$((0x$(cat "/dev/shm/aicha/registers/$lvalue")))
                      case "$rvalue" in
                          "REGIST"[0-9A-F][0-9A-F] )                     
-                             T=$(($T << $((0x$(cat "./registers/$rvalue"))) & 0xFFFFFFFF));;
+                             T=$(($T << $((0x$(cat "/dev/shm/aicha/registers/$rvalue"))) & 0xFFFFFFFF));;
                          [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )
                              T=$(($T << $((0x$rvalue)) & 0xFFFFFFFF));;
                      esac
-                     printf %08X $T > "./registers/$lvalue";;
+                     printf %08X $T > "/dev/shm/aicha/registers/$lvalue";;
                 * )   
                      echo "ERR: SHL lvalue cannot be a number"
                      exit 2;; 
@@ -208,14 +209,14 @@ do
         "SHR" )
             case "$lvalue" in
                 "REGIST"[0-9A-F][0-9A-F] )
-                     T=$((0x$(cat "./registers/$lvalue")))
+                     T=$((0x$(cat "/dev/shm/aicha/registers/$lvalue")))
                      case "$rvalue" in
                          "REGIST"[0-9A-F][0-9A-F] )                     
-                             T=$(($T >> $((0x$(cat "./registers/$rvalue")))));;
+                             T=$(($T >> $((0x$(cat "/dev/shm/aicha/registers/$rvalue")))));;
                          [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )
                              T=$(($T >> $((0x$rvalue))));;
                      esac
-                     printf %08X $T > "./registers/$lvalue";;
+                     printf %08X $T > "/dev/shm/aicha/registers/$lvalue";;
                 * )   
                      echo "ERR: SHR lvalue cannot be a number"
                      exit 2;; 
@@ -223,14 +224,14 @@ do
         "NOR" )
             case "$lvalue" in
                 "REGIST"[0-9A-F][0-9A-F] )                
-                     T=$((0x$(cat "./registers/$lvalue")))
+                     T=$((0x$(cat "/dev/shm/aicha/registers/$lvalue")))
                      case "$rvalue" in
                          "REGIST"[0-9A-F][0-9A-F] )                     
-                             T=$(($((~$(($T | $((0x$(cat "./registers/$rvalue"))))))) & 0xFFFFFFFF));;
+                             T=$(($((~$(($T | $((0x$(cat "/dev/shm/aicha/registers/$rvalue"))))))) & 0xFFFFFFFF));;
                          [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )
                              T=$((~$(($(($T | $((0x$rvalue)))))) & 0xFFFFFFFF));;
                      esac
-                     printf %08X $T > "./registers/$lvalue";;
+                     printf %08X $T > "/dev/shm/aicha/registers/$lvalue";;
                 * )   
                      echo "ERR: NOR lvalue cannot be a number"
                      exit 2;;  
@@ -243,10 +244,10 @@ do
                     "REGIST"[0-9A-F][0-9A-F] )
                         if [ "$lvalue" != "$REGISTLEFT" ] 
                         then                    
-                            cat "./registers/$lvalue" > "./registers/$REGISTLEFT"  
+                            cat "/dev/shm/aicha/registers/$lvalue" > "/dev/shm/aicha/registers/$REGISTLEFT"  
                         fi;;
                     [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] )                 
-                        echo "$lvalue" > "./registers/$REGISTLEFT";;
+                        echo "$lvalue" > "/dev/shm/aicha/registers/$REGISTLEFT";;
                 esac
             fi
             if [ -n $rvalue ]
@@ -255,25 +256,25 @@ do
                     "REGIST"[0-9A-F][0-9A-F] )
                         if [ "$rvalue" != "$REGISTRGHT" ] 
                         then                         
-                            cat "./registers/$rvalue" > "./registers/$REGISTRGHT"
+                            cat "/dev/shm/aicha/registers/$rvalue" > "/dev/shm/aicha/registers/$REGISTRGHT"
                         fi;;
                     [0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F][0-9A-F] ) 
-                        echo "$rvalue" > "./registers/$REGISTRGHT";;
+                        echo "$rvalue" > "/dev/shm/aicha/registers/$REGISTRGHT";;
                 esac
             fi
         
             if [ -n "$(find ./sys/ -name $command.aic | tr -d '\n')" ]
             then                
-                OLDCARET=$((0x$(cat ./registers/REGISTFF)))
-                echo "00000000" > ./registers/REGISTFF
+                OLDCARET=$((0x$(cat /dev/shm/aicha/registers/REGISTFF)))
+                echo "00000000" > /dev/shm/aicha/registers/REGISTFF
                 ./main.sh "$(find ./sys/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
-                printf %08X "$OLDCARET" > "./registers/REGISTFF"
+                printf %08X "$OLDCARET" > "/dev/shm/aicha/registers/REGISTFF"
             elif [ -n "$(find ./usr/ -name $command.aic | tr -d '\n')" ]
             then
-                OLDCARET=$((0x$(cat ./registers/REGISTFF)))
-                echo "00000000" > ./registers/REGISTFF
+                OLDCARET=$((0x$(cat /dev/shm/aicha/registers/REGISTFF)))
+                echo "00000000" > /dev/shm/aicha/registers/REGISTFF
                 ./main.sh "$(find ./usr/ -name $command.aic | tr -d '\n')" $FORMAT "NO" "NO" $DEBUG_MODE $(($DEEPNESS + 1))
-                printf %08X "$OLDCARET" > "./registers/REGISTFF"
+                printf %08X "$OLDCARET" > "/dev/shm/aicha/registers/REGISTFF"
             else
                 echo "ERR: Command \"$command\" is not found"
                 exit 2;
@@ -290,8 +291,8 @@ do
             exit 2;;
     esac
     
-    TT=$((0x$(cat ./registers/REGISTFF) + 1))
-    printf %08X "$TT" > "./registers/REGISTFF"
+    TT=$((0x$(cat /dev/shm/aicha/registers/REGISTFF) + 1))
+    printf %08X "$TT" > "/dev/shm/aicha/registers/REGISTFF"
 done
 
 for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "└───"
@@ -299,5 +300,5 @@ for ((i=0; i < "$DEEPNESS"; i++)) do echo -n "│"; done; echo "└───"
 if [ "$DEEPNESS" == 0 ]
 then
     createOutput
-    rm -f ./registers/*
+    rm -f /dev/shm/aicha/registers/*
 fi
