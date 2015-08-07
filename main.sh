@@ -117,6 +117,7 @@ createOutput() {
     "INTS"  ) 
         for ((i=0; i <= 0xFF; i++))
         do
+            printf "%02X: " $i >> "$OUTPUT"
             cat "/dev/shm/aicha/registers/REGIST$(printf %02X $i)" | tr -d "\n" >> "$OUTPUT"
             echo -n " " >> "$OUTPUT"
             if [ $((i % 8)) -eq 7 ]
@@ -169,7 +170,7 @@ echo "00000000" > /dev/shm/aicha/registers/REGISTFF
 while (( ${#lines[@]} > 0x$(cat /dev/shm/aicha/registers/REGISTFF)))
 do    
     line="${lines[0x$(cat /dev/shm/aicha/registers/REGISTFF)]}"
-
+    
     command=$(echo $line | cut -d' ' -f1)
      lvalue=$(echo $line | cut -d' ' -f2)
      rvalue=$(echo $line | cut -d' ' -f3)
