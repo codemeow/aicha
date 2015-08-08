@@ -78,6 +78,8 @@ void outputregisters()
         if (i % 8 == 7)
             fprintf(f, "\n");
     }
+    
+    fclose(f);
 }
 
 void processcommand(std::string command, std::string lvalue, std::string rvalue, int deepness)
@@ -223,6 +225,10 @@ void processcommand(std::string command, std::string lvalue, std::string rvalue,
     {
         
     }
+    else if (command == "")
+    {
+    
+    }
     else
     {
          cout << "ERR: Unknown command: " << command << endl;
@@ -237,8 +243,6 @@ void processfile(std::string filename, int deepness)
         spacebuf += " ";
     cout << spacebuf << filename << endl;
     
-    vector<string> filelines;
-    
     int findex = findfileinholder(filename);
     if (findex < 0)
     {
@@ -251,13 +255,19 @@ void processfile(std::string filename, int deepness)
     while (filesholder[findex].lines.size() > registers[REGCARET])
     {
         string line;
+        
         line = filesholder[findex].lines[registers[REGCARET]];
-            
+              
         vector<string> x;
         x.clear();
         split(line, ' ', x);
+ 
+        while (x.size() < 3)
+        {
+            x.push_back("");
+        }
         
-        processcommand(x[0], x[1], x[2], deepness);
+        processcommand(x[0], x[1], x[2], deepness);   
             
         registers[REGCARET]++;
     }
@@ -310,7 +320,7 @@ void initcommands(string filename)
     }
 }
 
-int main()
+int main(int argc, char * argv[])
 {
     initregisters(0);    
     initcommands("test.aic");
@@ -321,4 +331,3 @@ int main()
    
     return 0;
 }
-
