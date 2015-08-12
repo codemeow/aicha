@@ -17,6 +17,7 @@
 ## Output       : REGISTFD (S), REGISTFE (Cout)
 ## Registers    : REGIST84, REGIST85, REGIST86, REGIST87
 ## Dependencies : PSH, POP, XOR, AND, ORR
+## Pushes       : 1
 
 # Push
 PSH
