@@ -1,31 +1,30 @@
 #include <stdio.h>
 
-//#define PUSH
-
-#ifdef PUSH
-const int ispush = 1;
-#else
-const int ispush = 0;
-#endif // PUSH
-
 int main()
 {
     int i;
     
-    if (ispush) // Push
+    // Push
+    // MOV 7F 7E
+    // MOV 7E 7D
+    // ...
+    // MOV 01 00
+    
+    printf("# Push\n");
+    for (i = 0x7F; i > 0; i--)
     {
-        printf("# Push\n");
-        for (i = 1; i < 0x80; i++)
-        {
-            printf("MOV REGIST%02X REGIST%02X\n", i, i - 1);
-        }
+        printf("MOV REGIST%02X REGIST%02X\n", i, i - 1);
     }
-    else // Pop
+        
+    // Pop
+    // MOV 00 01
+    // MOV 01 02
+    // ...
+    // MOV 7E 7F
+    
+    printf("# Restore\n");
+    for (i = 0; i < 0x7F; i++)
     {
-        printf("# Restore\n");
-        for (i = 0x7F; i >= 0; i--)
-        {
-            printf("MOV REGIST%02X REGIST%02X\n", i, i + 1);
-        }
-    }
+        printf("MOV REGIST%02X REGIST%02X\n", i, i + 1);
+    }    
 }

@@ -11,7 +11,7 @@ const int REGCARET = 0xFF;
 const int REGL     = 0xFD;
 const int REGR     = 0xFE;
 
-uint registers[0x100];
+unsigned int registers[0x100];
 
 typedef struct
 {
@@ -93,12 +93,13 @@ void processcommand(std::string command, std::string lvalue, std::string rvalue,
             {
                 int rnum = strtol(rvalue.substr(6, 2).c_str(), 0, 16);
                 registers[lnum] = registers[rnum];
-                registers[lnum] &= 0xFFFFFFFFU;
             }
             else
             {
-                registers[lnum] = strtol(rvalue.c_str(), 0, 16);
-                registers[lnum] &= 0xFFFFFFFFU;
+                // strtol limitation fix
+                uint left = strtol(rvalue.substr(0, 4).c_str(), 0, 16);
+                uint rght = strtol(rvalue.substr(4, 4).c_str(), 0, 16);            
+                registers[lnum] = (left << 16) | rght;
             }
         }
         else
@@ -215,7 +216,7 @@ void processcommand(std::string command, std::string lvalue, std::string rvalue,
             }
         }
         
-        int oldcaret = registers[REGCARET];
+        uint oldcaret = registers[REGCARET];
         processfile(command, deepness + 1);
         registers[REGCARET] = oldcaret;
     }
