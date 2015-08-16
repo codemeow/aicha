@@ -93,10 +93,12 @@ void processcommand(std::string command, std::string lvalue, std::string rvalue,
             {
                 int rnum = strtol(rvalue.substr(6, 2).c_str(), 0, 16);
                 registers[lnum] = registers[rnum];
+                registers[lnum] &= 0xFFFFFFFFU;
             }
             else
             {
                 registers[lnum] = strtol(rvalue.c_str(), 0, 16);
+                registers[lnum] &= 0xFFFFFFFFU;
             }
         }
         else
@@ -331,3 +333,4 @@ int main(int argc, char * argv[])
    
     return 0;
 }
+
