@@ -1,0 +1,46 @@
+## «SDD extension» - "32 bit adder" extension subprogram for Aicha programming language
+##
+##  Project Aicha is free software: you can redistribute it and/or modify
+##  it under the terms of the GNU Lesser General Public License as published by
+##  the Free Software Foundation, either version 3 of the License, or
+##  (at your option) any later version.
+##
+##  Project Aicha is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+##  GNU Lesser General Public License for more details.
+##
+##  You should have received a copy of the GNU Lesser General Public License
+##  along with Project Aicha. If not, see <http://www.gnu.org/licenses/>.
+
+## Input        :
+## Output       : 
+## Registers    : REGIST00, REGIST01, REGIST02, REGIST03, REGIST04, REGIST05, REGIST06
+## Dependencies : GET, SHL, ORR
+
+## Registers mapping :
+##     REGIST00 - Copy of A
+##     REGIST01 - Copy of B
+##     REGIST02 - Cout holder
+##     REGIST03 - Bit number holder
+##     REGIST04 - Nth bit of A
+##     REGIST05 - Nth bit of B
+##     REGIST06 - Result
+
+# Get A's Nth bit
+GET REGIST00 REGIST03
+MOV REGIST04 REGISTFD
+
+# Get B's Nth bit
+GET REGIST01 REGIST03
+MOV REGIST05 REGISTFD
+
+# Add
+MOV REGISTFC REGIST02
+FAD REGIST04 REGIST05
+MOV REGIST02 REGISTFE
+
+# Place the result
+SHL REGISTFD REGIST03
+ORR REGISTFD REGIST06
+MOV REGIST06 REGISTFD
